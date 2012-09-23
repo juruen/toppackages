@@ -1,0 +1,20 @@
+SOURCE=main.cpp dpkg.cpp systemtap.cpp
+BINARY=topdeb
+
+CC=g++ -g
+
+LIBS=-lboost_system -lboost_filesystem
+
+CCXXFLAGS=-std=c++0x
+
+all: $(BINARY)
+
+
+
+$(BINARY): $(SOURCE)
+
+	$(CC) $(CCXXFLAGS) $(SOURCE) $(LIBS) -o$(BINARY)
+
+clean:
+
+	rm -f $(BINARY)
