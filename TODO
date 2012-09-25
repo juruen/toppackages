@@ -4,7 +4,6 @@ TODO list for beta release
 - Timestamp improvements
 - Serialization
 - Command line arguments
-- Add event loop and remove thread
 - Detect if systemtap is working OK
 - Make it a deamon
 - Packaging
