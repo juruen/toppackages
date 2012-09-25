@@ -12,7 +12,7 @@ int main() {
 
   systemtap files(
       io_service,
-      [&] (std::string line) { packages.openfile(line); } 
+      [&] (std::string line) { packages.open_file(line); } 
    );
    
   if (!files.start()) {

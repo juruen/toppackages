@@ -22,21 +22,21 @@ namespace {
 
 dpkg::dpkg(boost::asio::io_service& io_service) : m_timer(io_service, zero_freq)
 {
-  _loadFileLists();
+  load_filelists();
   add_handle();
 }
 
-void dpkg::openfile(string path)
+void dpkg::open_file(string path)
 {
-  auto it = fileToPackage.find(path);
-  if (it == fileToPackage.end()) return;
+  auto it = file_to_package.find(path);
+  if (it == file_to_package.end()) return;
 
-  dlnodelist<pkgUsage>* node = (*it).second;
+  dlnodelist<pkg_usage>* node = (*it).second;
   node->value.second += 1;
   packages_list.to_front(node);
 }
 
-void dpkg::dumpTop()
+void dpkg::dump_top()
 {
   auto loops = topPkgs;
   auto node = packages_list.front();
@@ -51,7 +51,7 @@ void dpkg::dumpTop()
 }
 
 
-void dpkg::_loadFileLists()
+void dpkg::load_filelists()
 {
   for (
     directory_iterator it = directory_iterator(dpkg_path);
@@ -64,17 +64,17 @@ void dpkg::_loadFileLists()
     pkgname = pkgname.erase(pkgname.size() - list_ext.size(), list_ext.size());
 
     ifstream infile((*it).path().string());
-    packages_list.push_front(pkgUsage(pkgname, 0));
+    packages_list.push_front(pkg_usage(pkgname, 0));
     auto list_node = packages_list.front();
     for (string line; getline(infile, line);) {
-      fileToPackage[line] = list_node;
+      file_to_package[line] = list_node;
     }
   }
 }
 
 void dpkg::timer_handle( const boost::system::error_code& ec)
 {
-  dumpTop();
+  dump_top();
   add_handle();
 }
 
