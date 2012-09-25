@@ -4,17 +4,23 @@
 #include <iostream>
 #include <thread>
 #include <unistd.h>
+#include <boost/asio.hpp>
+#include <boost/bind.hpp>
 
 int main() {
-  dpkg packages;
-  systemtap files;
+  boost::asio::io_service io_service;
+
+  dpkg packages(io_service);
+
+  systemtap files(
+      io_service,
+      [&] (std::string line) { packages.openfile(line); } 
+   );
    
-  std::thread dump(
-    [&] () { while (1) { sleep(1); packages.dumpTop(); } }   
-  );
- 
-  files.start(
-    [&] (std::string line) { packages.openfile(line); }   
-  );
- 
+  if (!files.start()) {
+   exit(-1);
+  }
+
+  io_service.run();
 }
+

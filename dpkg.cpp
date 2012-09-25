@@ -4,6 +4,8 @@
 #include <fstream>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/bind.hpp>
 
 using namespace boost::filesystem;
 using namespace boost::algorithm;
@@ -14,11 +16,14 @@ namespace {
   const string list_ext(".list");
   const unsigned int topPkgs = 50;
   const string outputfile ("topdeb.out");
+  const boost::posix_time::seconds freq(1);
+  const boost::posix_time::seconds zero_freq(0);
 };
 
-dpkg::dpkg()
+dpkg::dpkg(boost::asio::io_service& io_service) : m_timer(io_service, zero_freq)
 {
   _loadFileLists();
+  add_handle();
 }
 
 void dpkg::openfile(string path)
@@ -28,9 +33,7 @@ void dpkg::openfile(string path)
 
   dlnodelist<pkgUsage>* node = (*it).second;
   node->value.second += 1;
-  mutex.lock();
   packages_list.to_front(node);
-  mutex.unlock();
 }
 
 void dpkg::dumpTop()
@@ -39,15 +42,14 @@ void dpkg::dumpTop()
   auto node = packages_list.front();
   std::ofstream ofile;
   ofile.open(outputfile);
-  mutex.lock();
   while (loops > 0 && node->next) {
     ofile << node->value.first << endl;
     node = node->next;
     loops--;
   }
-  mutex.unlock();
   ofile.close();
 }
+
 
 void dpkg::_loadFileLists()
 {
@@ -69,4 +71,24 @@ void dpkg::_loadFileLists()
     }
   }
 }
+
+void dpkg::timer_handle( const boost::system::error_code& ec)
+{
+  dumpTop();
+  add_handle();
+}
+
+void dpkg::add_handle()
+{
+  m_timer.expires_at(m_timer.expires_at() + freq);
+  m_timer.async_wait(
+      boost::bind(
+        &dpkg::timer_handle,
+        this,
+        boost::asio::placeholders::error
+      )
+  );
+}
+
+
 
