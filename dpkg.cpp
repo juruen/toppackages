@@ -14,13 +14,15 @@ using namespace std;
 namespace {
   const path dpkg_path("/var/lib/dpkg/info");
   const string list_ext(".list");
-  const unsigned int topPkgs = 50;
-  const string outputfile ("topdeb.out");
   const boost::posix_time::seconds freq(1);
   const boost::posix_time::seconds zero_freq(0);
 };
 
-dpkg::dpkg(boost::asio::io_service& io_service) : m_timer(io_service, zero_freq)
+dpkg::dpkg(boost::asio::io_service& io_service, settings& sett) 
+  : m_timer(io_service, zero_freq),
+  file_to_package(),
+  top_list(),
+  sett(sett)
 {
   load_filelists();
   add_handle();
@@ -38,10 +40,10 @@ void dpkg::open_file(string path)
 
 void dpkg::dump_top()
 {
-  auto loops = topPkgs;
+  auto loops = sett.top_packages;
   auto node = packages_list.front();
   std::ofstream ofile;
-  ofile.open(outputfile);
+  ofile.open(sett.output_file);
   while (loops > 0 && node->next) {
     ofile << node->value.first << endl;
     node = node->next;
