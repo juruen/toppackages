@@ -8,7 +8,7 @@ struct settings
   std::string output_file;
   unsigned int top_packages;
 
-  settings() : output_file("/tmp/topdeb.out"), top_packages(50) {}
+  settings() : output_file("topdeb.out"), top_packages(50) {}
 };
 
 #endif
