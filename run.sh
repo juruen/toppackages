@@ -1,6 +1,6 @@
 #!/bin/sh
 
-sudo ./topdeb&
+sudo ./topdeb -o topdeb.out -t 50&
 TOPDEBPID=$!
 watch --interval 1 cat topdeb.out
 sudo kill $TOPDEBPID
