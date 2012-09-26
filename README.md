@@ -35,3 +35,5 @@ service but the foundations are there already.
 To show you how this works, I've done a sort of "top-like" tool where the
 packages which are been currently used are displayed. If you want to check it
 out, here's a youtube video.
+
+http://www.youtube.com/watch?v=B2e1Q5mrP8U
