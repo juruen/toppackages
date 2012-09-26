@@ -6,10 +6,11 @@
 #include <list>
 #include <boost/asio.hpp>
 #include "dllist.h"
+#include "settings.h"
 
 class dpkg {
   public:
-    dpkg(boost::asio::io_service&);
+    dpkg(boost::asio::io_service&, settings& sett);
     void openfile(std::string path);
     void dumpTop();
 
@@ -25,7 +26,7 @@ class dpkg {
     typedef dlnodelist<pkgUsage>* pkg_list_node;
     std::unordered_map<std::string, pkg_list_node>  fileToPackage;
     std::list<pkg_list_node> top_list;
-
+    settings& sett;
 };
 
 #endif
