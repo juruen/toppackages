@@ -1,7 +1,7 @@
 toppackages
 ===========
 
-This a tool to list all the deb packages in your system ordered by most recently
+This is a tool to list all the deb packages in your system ordered by most recently
 used. Although it's still a proof of concept.
 
 Whenever I'm trying a new library, tool or application, I end up with a whole
