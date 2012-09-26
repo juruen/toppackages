@@ -3,7 +3,7 @@ BINARY=topdeb
 
 CC=g++ -g
 
-LIBS=-lboost_system -lboost_filesystem
+LIBS=-lboost_system -lboost_filesystem -lboost_program_options
 
 CCXXFLAGS=-std=c++0x
 
