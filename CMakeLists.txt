@@ -1,0 +1,55 @@
+PROJECT(topdeb)
+
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
+
+SET(TOPDEB_SRCS
+    ${CMAKE_SOURCE_DIR}/dpkg.cpp
+    ${CMAKE_SOURCE_DIR}/systemtap.cpp
+    ${CMAKE_SOURCE_DIR}/main.cpp
+   )
+
+SET(TOPDEB_HDRS
+    ${CMAKE_SOURCE_DIR}/
+  )
+
+ADD_DEFINITIONS( -Wall )
+ADD_DEFINITIONS( -std=c++0x )
+ADD_DEFINITIONS( -g )
+
+SET(Boost_USE_STATIC_LIBS ON)
+SET(Boost_USE_MULTITHREAD ON)
+SET(Boost_USER_STATIC_RUNTIME OFF)
+
+FIND_PACKAGE(Threads)
+
+FIND_PACKAGE(Boost COMPONENTS
+    filesystem
+    system
+    program_options
+  )
+
+IF(Boost_FOUND)
+  INCLUDE_DIRECTORIES(
+      ${CMAKE_CURRENT_BINARY_DIR}
+      ${CMAKE_BINARY_DIR}
+      ${Boost_INCLUDE_DIRS}
+      ${TOPDEB_HDRS}
+      )
+
+  LINK_DIRECTORIES(
+      ${Boost_LIBRARY_DIRS}
+      )
+
+  ADD_EXECUTABLE(
+      topdeb
+      ${TOPDEB_SRCS}
+      )
+
+  TARGET_LINK_LIBRARIES(
+      topdeb
+      ${CMAKE_THREAD_LIBS_INIT}
+      ${Boost_LIBRARIES}
+      )
+ENDIF()
