@@ -2,6 +2,8 @@
 #include "systemtap.h"
 #include "dllist.h"
 #include "settings.h"
+#include "logger.h"
+
 #include <iostream>
 #include <unistd.h>
 #include <boost/asio.hpp>
@@ -47,6 +49,10 @@ bool parse_command_line(int argc, char* argv[], settings& sett) {
 }
 
 int main(int argc, char* argv[]) {
+  logging::logger mylog("topdeb", logging::facility::daemon);
+
+  std::clog << "topdeb launched" << std::endl;
+
   settings sett;
 
   if(!parse_command_line(argc, argv, sett))
