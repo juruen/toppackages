@@ -37,3 +37,18 @@ packages which are been currently used are displayed. If you want to check it
 out, here's a youtube video.
 
 http://www.youtube.com/watch?v=B2e1Q5mrP8U
+
+Build instructions
+==================
+
+Dependences: cmake 2.8, Boost (filesystem, system, asio, program_options) and a
+latest c++ compiler with c++11 support.
+
+Steps:
+  mkdir build
+  cd build
+  cmake ..
+  make
+  cd ..
+  sudo ./run.sh
+
