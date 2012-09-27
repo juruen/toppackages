@@ -1,4 +1,4 @@
-SOURCE=main.cpp dpkg.cpp systemtap.cpp
+SOURCE=main.cpp dpkg.cpp systemtap.cpp log.cpp
 BINARY=topdeb
 
 CC=g++ -g
