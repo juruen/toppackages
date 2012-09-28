@@ -33,7 +33,7 @@ void dpkg::open_file(string path)
   auto it = file_to_package.find(path);
   if (it == file_to_package.end()) return;
 
-  dlnodelist<pkg_usage>* node = (*it).second;
+  dlnodelist<pkg_usage>* node = it->second;
   node->value.second += 1;
   packages_list.to_front(node);
 }
@@ -60,12 +60,11 @@ void dpkg::load_filelists()
     it != directory_iterator();
     it++) {
 
-    if (!ends_with((*it).path().string(), list_ext)) continue;
+    if (!ends_with(it->path().string(), list_ext)) continue;
 
-    string pkgname = (*it).path().filename().string();
-    pkgname = pkgname.erase(pkgname.size() - list_ext.size(), list_ext.size());
+    string pkgname = it->path().stem().string();
 
-    ifstream infile((*it).path().string());
+    ifstream infile(it->path().string());
     packages_list.push_front(pkg_usage(pkgname, 0));
     auto list_node = packages_list.front();
     for (string line; getline(infile, line);) {
