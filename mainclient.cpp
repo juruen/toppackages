@@ -1,8 +1,5 @@
-#include "dpkg.h"
-#include "systemtap.h"
-#include "cmdserver.h"
-#include "dllist.h"
-#include "settings.h"
+#include "cmdclient.h"
+#include "clientsettings.h"
 #include <iostream>
 #include <unistd.h>
 #include <boost/asio.hpp>
@@ -16,8 +13,9 @@ bool parse_command_line(int argc, char* argv[], settings& sett) {
 
   desc.add_options()
     ("help,h", "produce help message")
-    ("outfile,o", po::value<std::string>(), "filename full path")
-    ("top-pkgs,t", po::value<unsigned int>(), "number of top packages");
+    ("top,t", po::value<unsigned int>(), "dump top 'arg' of used packages")
+    ("bottom,n", po::value<unsigned int>(), "dump bottom 'arg' of used packages")
+    ("all,a", "dump all packages");
 
   po::variables_map vm;
 
@@ -36,12 +34,12 @@ bool parse_command_line(int argc, char* argv[], settings& sett) {
     return false;;
   }
 
-  if(vm.count("outfile")) {
-    sett.output_file = vm["outfile"].as<std::string>();
+  if(vm.count("top")) {
+    sett.top = vm["top"].as<unsigned int>();
   }
 
-  if(vm.count("top-pkgs")) {
-    sett.top_packages = vm["top-pkgs"].as<unsigned int>();
+  if(vm.count("bottom")) {
+    sett.bottom = vm["bottom"].as<unsigned int>();
   }
 
   return true;
@@ -55,26 +53,6 @@ int main(int argc, char* argv[]) {
     exit(EXIT_SUCCESS);
   }
 
-  boost::asio::io_service io_service;
-
-  dpkg packages(io_service, sett);
-
-  systemtap files(
-      io_service,
-      [&] (std::string line) { packages.open_file(line); } 
-   );
-
-  cmdserver cmdserver(
-      io_service,
-      [&] (const size_t max, std::vector<std::string>& top) 
-        { 
-          packages.current_top(max, top); 
-        } 
-   );
-
-  if (!files.start()) {
-   exit(EXIT_FAILURE);
-  }
-
-  io_service.run();
+  cmdclient cmdclient(sett);
+  return cmdclient.dump_top();
 }

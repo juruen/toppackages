@@ -38,16 +38,22 @@ void dpkg::open_file(string path)
   packages_list.to_front(node);
 }
 
+void dpkg::current_top(const size_t max, vector<string>& output)
+{
+  auto node = packages_list.front();
+  for (auto loops = max; loops > 0 && node->next; loops--) {
+    output.push_back(node->value.first);
+    node = node->next;
+  }
+}
 void dpkg::dump_top()
 {
-  auto loops = sett.top_packages;
-  auto node = packages_list.front();
+  vector<string> top;
+  current_top(sett.top_packages, top); 
   std::ofstream ofile;
   ofile.open(sett.output_file);
-  while (loops > 0 && node->next) {
-    ofile << node->value.first << endl;
-    node = node->next;
-    loops--;
+  for (auto s: top) {
+    ofile << s << endl;
   }
   ofile.close();
 }
@@ -82,6 +88,7 @@ void dpkg::timer_handle( const boost::system::error_code& ec)
 
 void dpkg::add_handle()
 {
+  return;
   m_timer.expires_at(m_timer.expires_at() + freq);
   m_timer.async_wait(
       boost::bind(
