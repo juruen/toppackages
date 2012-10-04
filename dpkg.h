@@ -3,6 +3,7 @@
 
 #include <unordered_map>
 #include <string>
+#include <vector>
 #include <list>
 #include <boost/asio.hpp>
 #include "dllist.h"
@@ -12,6 +13,7 @@ class dpkg {
   public:
     dpkg(boost::asio::io_service&, settings& sett);
     void open_file(std::string path);
+    void current_top(const size_t max, std::vector<std::string>& output);
     void dump_top();
 
   private:
