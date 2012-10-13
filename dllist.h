@@ -15,7 +15,7 @@ struct dlnodelist {
 template <class T>
 class dllist {
   public:
-  dllist() : _head(0) { }
+  dllist() : _head(0), _tail(0), _length(0) { }
 
   void push_front(T value) {
     dlnodelist<T>* node = new dlnodelist<T>();
@@ -26,8 +26,10 @@ class dllist {
       _head->prev = node;
     } else {
       node->next = 0;
+      _tail = node;
     }
     _head = node;
+    _length++;
   }
 
   void to_front(dlnodelist<T>* node) {
@@ -36,6 +38,7 @@ class dllist {
 
     if (!node->next) {
       node->prev->next = 0;
+      _tail = node->prev;
     } else {
       node->prev->next = node->next;
       node->next->prev = node->prev;
@@ -49,9 +52,13 @@ class dllist {
   }
 
   dlnodelist<T>* front() { return _head; }
+  dlnodelist<T>* back() { return _tail; }
+  size_t length() { return _length; }
 
   private:
   dlnodelist<T> *_head;
+  dlnodelist<T> *_tail;
+  size_t _length;
 
 };
 
