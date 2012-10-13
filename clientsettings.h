@@ -2,13 +2,14 @@
 #define SETTINGS_H
 
 #include <string>
+#include <boost/optional/optional.hpp>
 
 struct settings
 {
-  unsigned int top;
-  unsigned int bottom;
+  boost::optional<size_t> top;
+  boost::optional<size_t> bottom;
 
-  settings() : top(50), bottom(50) {}
+  settings() {}
 };
 
 #endif

@@ -9,7 +9,7 @@ namespace {
 
 cmdserver::cmdserver(
     boost::asio::io_service& io_service,
-    std::function<void(const size_t, std::vector<std::string>&)> get_top
+    std::function<void(dpkg::toptype, const size_t, std::vector<std::string>&)> get_top
 )
 :
   m_get_top(get_top)
@@ -73,25 +73,31 @@ void cmdserver::process_command()
     return;
   }
 
-  switch (cmd.id) {
-    case cmd::cmdid::dumptop:
-      dump_top(cmd.data);
-      break;
-  }
+ switch (cmd.id) {
+   case cmd::cmdid::dumptop:
+     dump_top(dpkg::toptype::top, cmd.data);
+     break;
+   case cmd::cmdid::dumpbottom:
+     dump_top(dpkg::toptype::bottom, cmd.data);
+     break;
+ }
 }
 
-void cmdserver::dump_top(unsigned int n)
+void cmdserver::dump_top(dpkg::toptype toptype, size_t n)
 {
   std::cout << "dump_top: " << std::endl;
 
   std::vector<std::string> top;
-  m_get_top(n, top);
+  m_get_top(toptype, n, top);
 
   cmd::cmd cmd;
   cmd.type = cmd::cmdtype::response;
-  cmd.id = cmd::cmdid::dumptop;
   cmd.data = top.size();
-
+  if (toptype == dpkg::toptype::top) {
+    cmd.id = cmd::cmdid::dumptop;
+  } else {
+    cmd.id = cmd::cmdid::dumpbottom;
+  }
 
   boost::shared_ptr<std::string> txt;
   m_socket->async_send_to(
@@ -111,7 +117,6 @@ void cmdserver::dump_top(unsigned int n)
           boost::asio::placeholders::error,
           boost::asio::placeholders::bytes_transferred));
   }
-
 }
 
 void cmdserver::stop()

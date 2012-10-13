@@ -14,7 +14,7 @@ bool parse_command_line(int argc, char* argv[], settings& sett) {
   desc.add_options()
     ("help,h", "produce help message")
     ("top,t", po::value<unsigned int>(), "dump top 'arg' of used packages")
-    ("bottom,n", po::value<unsigned int>(), "dump bottom 'arg' of used packages")
+    ("bottom,b", po::value<unsigned int>(), "dump bottom 'arg' of used packages")
     ("all,a", "dump all packages");
 
   po::variables_map vm;

@@ -11,9 +11,10 @@
 
 class dpkg {
   public:
+    enum class toptype { top, bottom, all };
     dpkg(boost::asio::io_service&, settings& sett);
     void open_file(std::string path);
-    void current_top(const size_t max, std::vector<std::string>& output);
+    void current_top(const toptype type, const size_t max, std::vector<std::string>& output);
     void dump_top();
 
   private:

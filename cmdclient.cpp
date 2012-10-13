@@ -41,8 +41,14 @@ bool cmdclient::dump_top()
     cmd::cmd cmd;
     cmd::cmd response;
     cmd.type = cmd::cmdtype::request;
-    cmd.id = cmd::cmdid::dumptop;
-    cmd.data = m_sett.top;
+
+    if (m_sett.top) {
+      cmd.id = cmd::cmdid::dumptop;
+      cmd.data = *m_sett.top;
+    } else {
+      cmd.id = cmd::cmdid::dumpbottom;
+      cmd.data = *m_sett.bottom;
+    }
 
     if (!send_cmd(cmd, response)) {
       std::cout << "Sending cmd failed" << std::endl;
@@ -50,7 +56,7 @@ bool cmdclient::dump_top()
     }
 
     if (!(response.type == cmd::cmdtype::response &&
-        response.id == cmd::cmdid::dumptop)) {
+        response.id == cmd.id )) {
       std::cout << "Wrong response" << std::endl;
       return false;
     }

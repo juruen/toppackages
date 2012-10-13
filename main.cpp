@@ -66,9 +66,9 @@ int main(int argc, char* argv[]) {
 
   cmdserver cmdserver(
       io_service,
-      [&] (const size_t max, std::vector<std::string>& top) 
+      [&] (dpkg::toptype toptype, const size_t max, std::vector<std::string>& top) 
         { 
-          packages.current_top(max, top); 
+          packages.current_top(toptype, max, top); 
         } 
    );
 

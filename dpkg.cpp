@@ -38,21 +38,33 @@ void dpkg::open_file(string path)
   packages_list.to_front(node);
 }
 
-void dpkg::current_top(const size_t max, vector<string>& output)
+void dpkg::current_top(const toptype type, const size_t max, vector<string>& output)
 {
-  auto node = packages_list.front();
-  for (auto loops = max; loops > 0 && node->next; loops--) {
+  auto node = packages_list.front();;
+  size_t max_packages = max;
+  if (type != toptype::top) {
+    node = packages_list.back();
+  }
+  if (type == toptype::all) {
+    max_packages = packages_list.length();
+  }
+  for (auto loops = max_packages; loops > 0 && node; loops--) {
     output.push_back(node->value.first);
-    node = node->next;
+    if (type == toptype::top) {
+      node = node->next;
+    } else {
+      node = node->prev;
+    }
   }
 }
+
 void dpkg::dump_top()
 {
-  vector<string> top;
-  current_top(sett.top_packages, top); 
+  vector<string> packages;
+  current_top(toptype::top, sett.top_packages, packages); 
   std::ofstream ofile;
   ofile.open(sett.output_file);
-  for (auto s: top) {
+  for (auto s: packages) {
     ofile << s << endl;
   }
   ofile.close();
