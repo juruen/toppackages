@@ -1,7 +1,6 @@
 #include "dpkg.h"
 #include "systemtap.h"
 #include "cmdserver.h"
-#include "dllist.h"
 #include "settings.h"
 #include "commonserver.h"
 #include <iostream>

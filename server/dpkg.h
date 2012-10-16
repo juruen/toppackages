@@ -6,7 +6,6 @@
 #include <vector>
 #include <list>
 #include <boost/asio.hpp>
-#include "dllist.h"
 #include "settings.h"
 #include "commonserver.h"
 
@@ -23,13 +22,16 @@ class dpkg {
     void add_handle();
 
   private:
+    void top_n(size_t n, std::vector<std::string>& output);
+    void bottom_n(size_t n, std::vector<std::string>& output);
+
     boost::asio::deadline_timer m_timer;
+    settings& m_sett;
+    
     typedef std::pair<std::string, long long> pkg_usage;
-    dllist<pkg_usage> packages_list;
-    typedef dlnodelist<pkg_usage>* pkg_list_node;
-    std::unordered_map<std::string, pkg_list_node>  file_to_package;
-    std::list<pkg_list_node> top_list;
-    settings& sett;
+    std::list<pkg_usage> m_packages_list;
+    typedef std::list<pkg_usage>::iterator packages_list_iter;
+    std::unordered_map<std::string, packages_list_iter> m_file_to_package;
 };
 
 #endif

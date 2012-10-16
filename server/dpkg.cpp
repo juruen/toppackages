@@ -20,9 +20,9 @@ namespace {
 
 dpkg::dpkg(boost::asio::io_service& io_service, settings& sett) 
   : m_timer(io_service, zero_freq),
-  file_to_package(),
-  top_list(),
-  sett(sett)
+  m_sett(sett),
+  m_packages_list(),
+  m_file_to_package()
 {
   load_filelists();
   add_handle();
@@ -30,40 +30,54 @@ dpkg::dpkg(boost::asio::io_service& io_service, settings& sett)
 
 void dpkg::open_file(string path)
 {
-  auto it = file_to_package.find(path);
-  if (it == file_to_package.end()) return;
+  auto it = m_file_to_package.find(path);
+  if (it == m_file_to_package.end()) return;
 
-  dlnodelist<pkg_usage>* node = it->second;
-  node->value.second += 1;
-  packages_list.to_front(node);
+  packages_list_iter node = it->second;
+  node->second += 1;
+  m_packages_list.splice(m_packages_list.begin(), m_packages_list, node);
+  it->second = m_packages_list.begin();
+}
+
+void dpkg::top_n(size_t n, vector<string>& output)
+{
+  for(auto node = m_packages_list.begin();
+      n > 0 && node != m_packages_list.end();
+      ++node, --n)
+  {
+    output.push_back(node->first);
+  }
+}
+
+void dpkg::bottom_n(size_t n, vector<string>& output)
+{
+  for(auto node = m_packages_list.rbegin();
+      n > 0 && node != m_packages_list.rend();
+      ++node, --n)
+  {
+    output.push_back(node->first);
+  }
 }
 
 void dpkg::current_top(const commonserver::toptype type, const size_t max, vector<string>& output)
 {
-  auto node = packages_list.front();;
   size_t max_packages = max;
-  if (type != commonserver::toptype::top) {
-    node = packages_list.back();
-  }
   if (type == commonserver::toptype::all) {
-    max_packages = packages_list.length();
+    max_packages = m_packages_list.size();
   }
-  for (auto loops = max_packages; loops > 0 && node; loops--) {
-    output.push_back(node->value.first);
-    if (type == commonserver::toptype::top) {
-      node = node->next;
-    } else {
-      node = node->prev;
-    }
+  if (type == commonserver::toptype::top) {
+    top_n(max_packages, output);
+  } else {
+    bottom_n(max_packages, output);
   }
 }
 
 void dpkg::dump_top()
 {
   vector<string> packages;
-  current_top(commonserver::toptype::top, sett.top_packages, packages); 
+  current_top(commonserver::toptype::top, m_sett.top_packages, packages); 
   std::ofstream ofile;
-  ofile.open(sett.output_file);
+  ofile.open(m_sett.output_file);
   for (auto s: packages) {
     ofile << s << endl;
   }
@@ -83,10 +97,10 @@ void dpkg::load_filelists()
     string pkgname = it->path().stem().string();
 
     ifstream infile(it->path().string());
-    packages_list.push_front(pkg_usage(pkgname, 0));
-    auto list_node = packages_list.front();
+    m_packages_list.push_front(pkg_usage(pkgname, 0));
+    packages_list_iter list_node = m_packages_list.begin();
     for (string line; getline(infile, line);) {
-      file_to_package[line] = list_node;
+      m_file_to_package[line] = list_node;
     }
   }
 }
@@ -109,6 +123,3 @@ void dpkg::add_handle()
       )
   );
 }
-
-
-
