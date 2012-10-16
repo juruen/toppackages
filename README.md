@@ -37,3 +37,32 @@ packages which are been currently used are displayed. If you want to check it
 out, here's a youtube video.
 
 http://www.youtube.com/watch?v=B2e1Q5mrP8U
+
+Build instructions
+==================
+
+Dependences: cmake 2.8, Boost (filesystem, system, asio, program\_options) and a
+latest c++ compiler with c++11 support.
+
+Compilation steps:
+
+```bash
+  mkdir build
+  cd build
+  cmake ..
+  make
+```
+
+Run server:
+
+```bash
+  cd build
+  sudo ./topdeb-server
+```
+
+Run client:
+
+```bash
+  cd build
+  sudo ./topdeb-client -t 50
+```

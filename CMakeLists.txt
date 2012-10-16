@@ -1,0 +1,67 @@
+PROJECT(topdeb)
+
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+
+FILE(GLOB TOPDEB_SERVER_SRCS ${CMAKE_SOURCE_DIR}/server/*.cpp)
+FILE(GLOB TOPDEB_CLIENT_SRCS ${CMAKE_SOURCE_DIR}/client/*.cpp)
+
+SET(TOPDEB_HDRS
+    ${CMAKE_SOURCE_DIR}/common
+  )
+
+SET(TOPDEB_RESOURCES
+    ${CMAKE_SOURCE_DIR}/resources/opencall.stp
+    )
+
+ADD_DEFINITIONS( -Wall )
+ADD_DEFINITIONS( -std=c++11 )
+ADD_DEFINITIONS( -g )
+
+SET(Boost_USE_STATIC_LIBS ON)
+SET(Boost_USE_MULTITHREAD ON) 
+SET(Boost_USER_STATIC_RUNTIME OFF)
+
+FIND_PACKAGE(Threads)
+
+FIND_PACKAGE(Boost COMPONENTS
+    filesystem
+    system
+    program_options
+  )
+
+IF(Boost_FOUND)
+  INCLUDE_DIRECTORIES(
+      ${CMAKE_CURRENT_BINARY_DIR}
+      ${CMAKE_BINARY_DIR}
+      ${Boost_INCLUDE_DIRS}
+      ${TOPDEB_HDRS}
+      )
+
+  LINK_DIRECTORIES(
+      ${Boost_LIBRARY_DIRS}
+      )
+
+  ADD_EXECUTABLE(
+      topdeb-server
+      ${TOPDEB_SERVER_SRCS}
+      )
+
+  TARGET_LINK_LIBRARIES(
+      topdeb-server
+      ${CMAKE_THREAD_LIBS_INIT}
+      ${Boost_LIBRARIES}
+      )
+
+  ADD_EXECUTABLE(
+      topdeb-client
+      ${TOPDEB_CLIENT_SRCS}
+      )
+
+  TARGET_LINK_LIBRARIES(
+      topdeb-client
+      ${CMAKE_THREAD_LIBS_INIT}
+      ${Boost_LIBRARIES}
+      )
+
+  FILE(COPY ${TOPDEB_RESOURCES} DESTINATION ${CMAKE_BINARY_DIR})
+ENDIF()
