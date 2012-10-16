@@ -38,19 +38,19 @@ void dpkg::open_file(string path)
   packages_list.to_front(node);
 }
 
-void dpkg::current_top(const toptype type, const size_t max, vector<string>& output)
+void dpkg::current_top(const commonserver::toptype type, const size_t max, vector<string>& output)
 {
   auto node = packages_list.front();;
   size_t max_packages = max;
-  if (type != toptype::top) {
+  if (type != commonserver::toptype::top) {
     node = packages_list.back();
   }
-  if (type == toptype::all) {
+  if (type == commonserver::toptype::all) {
     max_packages = packages_list.length();
   }
   for (auto loops = max_packages; loops > 0 && node; loops--) {
     output.push_back(node->value.first);
-    if (type == toptype::top) {
+    if (type == commonserver::toptype::top) {
       node = node->next;
     } else {
       node = node->prev;
@@ -61,7 +61,7 @@ void dpkg::current_top(const toptype type, const size_t max, vector<string>& out
 void dpkg::dump_top()
 {
   vector<string> packages;
-  current_top(toptype::top, sett.top_packages, packages); 
+  current_top(commonserver::toptype::top, sett.top_packages, packages); 
   std::ofstream ofile;
   ofile.open(sett.output_file);
   for (auto s: packages) {

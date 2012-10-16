@@ -3,6 +3,7 @@
 #include "cmdserver.h"
 #include "dllist.h"
 #include "settings.h"
+#include "commonserver.h"
 #include <iostream>
 #include <unistd.h>
 #include <boost/asio.hpp>
@@ -66,7 +67,7 @@ int main(int argc, char* argv[]) {
 
   cmdserver cmdserver(
       io_service,
-      [&] (dpkg::toptype toptype, const size_t max, std::vector<std::string>& top) 
+      [&] (commonserver::toptype toptype, const size_t max, std::vector<std::string>& top) 
         { 
           packages.current_top(toptype, max, top); 
         } 

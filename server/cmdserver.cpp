@@ -9,7 +9,7 @@ namespace {
 
 cmdserver::cmdserver(
     boost::asio::io_service& io_service,
-    std::function<void(dpkg::toptype, const size_t, std::vector<std::string>&)> get_top
+    std::function<void(commonserver::toptype, const size_t, std::vector<std::string>&)> get_top
 )
 :
   m_get_top(get_top)
@@ -75,15 +75,15 @@ void cmdserver::process_command()
 
  switch (cmd.id) {
    case cmd::cmdid::dumptop:
-     dump_top(dpkg::toptype::top, cmd.data);
+     dump_top(commonserver::toptype::top, cmd.data);
      break;
    case cmd::cmdid::dumpbottom:
-     dump_top(dpkg::toptype::bottom, cmd.data);
+     dump_top(commonserver::toptype::bottom, cmd.data);
      break;
  }
 }
 
-void cmdserver::dump_top(dpkg::toptype toptype, size_t n)
+void cmdserver::dump_top(commonserver::toptype toptype, size_t n)
 {
   std::cout << "dump_top: " << std::endl;
 
@@ -93,7 +93,7 @@ void cmdserver::dump_top(dpkg::toptype toptype, size_t n)
   cmd::cmd cmd;
   cmd.type = cmd::cmdtype::response;
   cmd.data = top.size();
-  if (toptype == dpkg::toptype::top) {
+  if (toptype == commonserver::toptype::top) {
     cmd.id = cmd::cmdid::dumptop;
   } else {
     cmd.id = cmd::cmdid::dumpbottom;
