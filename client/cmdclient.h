@@ -2,11 +2,10 @@
 #define CMDCLIENT_H
 
 #include "cmd.h"
-#include "clientsettings.h"
+#include "settings.h"
 
 #include <boost/asio.hpp>
 #include <boost/asio/local/datagram_protocol.hpp>
-
 
 class cmdclient {
   public:

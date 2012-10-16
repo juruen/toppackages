@@ -1,6 +1,6 @@
-SERVERSOURCE=main.cpp dpkg.cpp systemtap.cpp cmdserver.cpp
+SERVERSOURCE=server/main.cpp server/dpkg.cpp server/systemtap.cpp server/cmdserver.cpp
 SERVER=topdeb-server
-CLIENTSOURCE=mainclient.cpp cmdclient.cpp
+CLIENTSOURCE=client/main.cpp client/cmdclient.cpp
 CLIENT=topdeb-client
 
 
@@ -8,7 +8,7 @@ CC=g++ -g
 
 LIBS=-lboost_system -lboost_filesystem -lboost_program_options
 
-CCXXFLAGS=-std=c++0x
+CCXXFLAGS=-std=c++0x -Icommon
 
 all: $(SERVER) $(CLIENT)
 
@@ -24,4 +24,4 @@ $(CLIENT): $(CLIENTSOURCE)
 
 clean:
 
-	rm -f $(BINARY)
+	rm -f $(CLIENT) $(SERVER)

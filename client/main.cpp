@@ -1,5 +1,5 @@
 #include "cmdclient.h"
-#include "clientsettings.h"
+#include "settings.h"
 #include <iostream>
 #include <unistd.h>
 #include <boost/asio.hpp>
