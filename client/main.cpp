@@ -10,6 +10,7 @@ namespace po = boost::program_options;
 
 bool parse_command_line(int argc, char* argv[], settings& sett) {
   po::options_description desc("Allowed options");
+  bool required_options = false;
 
   desc.add_options()
     ("help,h", "produce help message")
@@ -21,7 +22,7 @@ bool parse_command_line(int argc, char* argv[], settings& sett) {
 
   try {
     po::store(po::parse_command_line(argc, argv, desc), vm);
-  } catch (const boost::program_options::unknown_option& ex) {
+  } catch (const boost::program_options::error& ex) {
     std::cout << ex.what() << std::endl;
     std::cout << desc << std::endl;
     exit(EXIT_FAILURE);
@@ -29,17 +30,19 @@ bool parse_command_line(int argc, char* argv[], settings& sett) {
 
   po::notify(vm);
 
-  if(vm.count("help")) {
-    std::cout << desc << std::endl;
-    return false;;
-  }
-
   if(vm.count("top")) {
     sett.top = vm["top"].as<unsigned int>();
+    required_options = true;
   }
 
   if(vm.count("bottom")) {
     sett.bottom = vm["bottom"].as<unsigned int>();
+    required_options = true;
+  }
+
+  if((vm.count("help")) || (!required_options)) {
+    std::cout << desc << std::endl;
+    return false;
   }
 
   return true;
